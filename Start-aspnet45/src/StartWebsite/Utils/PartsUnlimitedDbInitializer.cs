@@ -84,7 +84,7 @@ namespace Start.Utils
                 SalePrice = 75.99M,
                 ProductArtUrl = "product_wheel_rim.jpg",
                 ProductDetails = "{ \"Material\" : \"Aluminum alloy\",  \"Design\" : \"Spoke\", \"Spokes\" : \"9\",  \"Number of Lugs\" : \"4\", \"Wheel Diameter\" : \"17 in.\", \"Color\" : \"Black\", \"Finish\" : \"Matte\" } ",
-                Description = "A Parts Unlimited favorite, the Matte Finish Rim is affordable low profile style. Fits all low profile tires.",
+                Description = "A Start favorite, the Matte Finish Rim is affordable low profile style. Fits all low profile tires.",
                 Inventory = 4,
                 LeadTime = 0,
                 RecommendationId = 4
