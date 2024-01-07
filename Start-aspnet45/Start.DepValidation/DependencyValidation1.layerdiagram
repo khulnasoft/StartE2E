@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layerModel xmlns:dm0="http://schemas.khulnasoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.khulnasoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="35b75aa9-6c65-436e-b521-2ce873709564" xmlns="http://schemas.khulnasoft.com/VisualStudio/TeamArchitect/LayerDesigner">
+  <layers>
+    <layer Id="494ad810-202e-4b4a-b2dd-d3dd12285938" name="Start.ProductSearch">
+      <references>
+        <reference Id="4826a260-d1f0-42fb-9799-e6f36f993a49" name="Start.ProductSearch">
+          <ArtifactNode Label="Start.ProductSearch" Category="CodeSchema_Namespace" Id="(Namespace=Start.ProductSearch)" />
+          <ExpandedNode Id="(Namespace=Start.ProductSearch)" Label="Start.ProductSearch" Category="CodeSchema_Namespace">
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="9382c204-bbc3-4e39-b1ca-f42289956bd0" name="Start.Controllers">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="9ee2ee41-17e6-45e7-b12e-32783bff7972" direction="Forward">
+          <layerMoniker Id="494ad810-202e-4b4a-b2dd-d3dd12285938" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="8c026567-c193-4b1a-a941-005272e652b0" direction="Forward">
+          <layerMoniker Id="025d8e1e-c5ba-433b-80e1-1cef03e5863d" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+      <references>
+        <reference Id="03bb70a5-5aa4-4ce0-b9a9-4e9c3bb3b9c0" name="Start.Controllers">
+          <ArtifactNode Label="Start.Controllers" Category="CodeSchema_Namespace" Id="(Namespace=Start.Controllers)" />
+          <ExpandedNode Id="(Namespace=Start.Controllers)" Label="Start.Controllers" Category="CodeSchema_Namespace">
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+    <layer Id="025d8e1e-c5ba-433b-80e1-1cef03e5863d" name="Start.ViewModels">
+      <references>
+        <reference Id="21f50bfa-05be-4604-97f7-9c23d9dd3bf1" name="Start.ViewModels">
+          <ArtifactNode Label="Start.ViewModels" Category="CodeSchema_Namespace" Id="(Namespace=Start.ViewModels)" />
+          <ExpandedNode Id="(Namespace=Start.ViewModels)" Label="Start.ViewModels" Category="CodeSchema_Namespace">
+            <LinkCategory Ref="Represents" />
+          </ExpandedNode>
+        </reference>
+      </references>
+    </layer>
+  </layers>
+</layerModel>

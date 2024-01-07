@@ -1,0 +1,265 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "WebsiteName": {
+            "type": "string"
+        },
+        "StartServerName": {
+            "type": "string"
+        },
+        "StartServerAdminLogin": {
+            "type": "string",
+            "defaultValue": "AdminUser"
+        },
+        "StartServerAdminLoginPassword": {
+            "type": "securestring"
+        },
+        "StartServerAdminLoginPasswordForTest": {
+            "type": "securestring"
+        },
+        "StartDBName": {
+            "type": "string",
+            "defaultValue": "StartDB"
+        },
+        "StartDBCollation": {
+            "type": "string",
+            "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+        },
+        "StartDBEdition": {
+            "type": "string",
+            "defaultValue": "Basic",
+            "allowedValues": [
+                "Basic",
+                "Business",
+                "Premium",
+                "Standard",
+                "Web"
+            ]
+        },
+        "StartHostingPlanName": {
+            "type": "string"
+        },
+        "StartHostingPlanSKU": {
+            "type": "string",
+            "allowedValues": [
+                "Standard"
+            ],
+            "defaultValue": "Standard"
+        },
+        "StartHostingPlanWorkerSize": {
+            "type": "string",
+            "allowedValues": [
+                "0",
+                "1",
+                "2"
+            ],
+            "defaultValue": "0"
+        },
+        "EnableRules": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "CdnStorageAccountName": {
+            "type": "string"
+        },
+        "CdnStorageContainerName": {
+            "type": "string"
+        },
+        "CdnStorageAccountNameForDev": {
+            "type": "string"
+        },
+        "CdnStorageContainerNameForDev": {
+            "type": "string"
+        },
+        "CdnStorageAccountNameForStaging": {
+            "type": "string"
+        },
+        "CdnStorageContainerNameForStaging": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "sharedTemplateUrl": "[uri(deployment().properties.templateLink.uri)]",
+        "sqlServerAndDbTemplateFile": "Start.Environment/Templates/SqlServerAndDb.json",
+        "appInsightsTemplateFile": "Start.Environment/Templates/AppInsights.json",
+        "hostingPlanTemplateFile": "Start.Environment/Templates/HostingPlanAndRules.json",
+        "websiteTemplateFile": "Start.Environment/Templates/WebsiteWithTwoSlots.json",
+        "websiteRulesTemplateFile": "Start.Environment/Templates/WebsiteRules.json"
+    },
+    "resources": [
+        {
+            "name": "SqlServerAndDb",
+            "type": "Khulnasoft.Resources/deployments",
+            "apiVersion": "2014-04-01-preview",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('sharedTemplateUrl'), '/', variables('sqlServerAndDbTemplateFile'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "StartServerName": { "value": "[parameters('StartServerName')]" },
+                    "StartServerAdminLogin": { "value": "[parameters('StartServerAdminLogin')]" },
+                    "StartServerAdminLoginPassword": { "value": "[parameters('StartServerAdminLoginPassword')]" },
+                    "StartDBName": { "value": "[parameters('StartDBName')]" },
+                    "StartDBCollation": { "value": "[parameters('StartDBCollation')]" },
+                    "StartDBEdition": { "value": "[parameters('StartDBEdition')]" }
+                }
+            }
+        },
+        {
+            "name": "SqlServerAndDb-Dev",
+            "type": "Khulnasoft.Resources/deployments",
+            "apiVersion": "2014-04-01-preview",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('sharedTemplateUrl'), '/', variables('sqlServerAndDbTemplateFile'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "StartServerName": { "value": "[concat(parameters('StartServerName'), 'dev')]" },
+                    "StartServerAdminLogin": { "value": "[parameters('StartServerAdminLogin')]" },
+                    "StartServerAdminLoginPassword": { "value": "[parameters('StartServerAdminLoginPasswordForTest')]" },
+                    "StartDBName": { "value": "[parameters('StartDBName')]" },
+                    "StartDBCollation": { "value": "[parameters('StartDBCollation')]" },
+                    "StartDBEdition": { "value": "[parameters('StartDBEdition')]" }
+                }
+            }
+        },
+        {
+            "name": "SqlServerAndDb-Stage",
+            "type": "Khulnasoft.Resources/deployments",
+            "apiVersion": "2014-04-01-preview",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('sharedTemplateUrl'), '/', variables('sqlServerAndDbTemplateFile'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "StartServerName": { "value": "[concat(parameters('StartServerName'), 'stage')]" },
+                    "StartServerAdminLogin": { "value": "[parameters('StartServerAdminLogin')]" },
+                    "StartServerAdminLoginPassword": { "value": "[parameters('StartServerAdminLoginPasswordForTest')]" },
+                    "StartDBName": { "value": "[parameters('StartDBName')]" },
+                    "StartDBCollation": { "value": "[parameters('StartDBCollation')]" },
+                    "StartDBEdition": { "value": "[parameters('StartDBEdition')]" }
+                }
+            }
+        },
+        {
+            "name": "AppInsights",
+            "type": "Khulnasoft.Resources/deployments",
+            "apiVersion": "2014-04-01-preview",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('sharedTemplateUrl'), '/', variables('appInsightsTemplateFile'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "WebsiteName": { "value": "[parameters('WebsiteName')]" }
+                }
+            }
+        },
+        {
+            "name": "AppInsights-Dev",
+            "type": "Khulnasoft.Resources/deployments",
+            "apiVersion": "2014-04-01-preview",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('sharedTemplateUrl'), '/', variables('appInsightsTemplateFile'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "WebsiteName": { "value": "[concat(parameters('WebsiteName'), '-Dev')]" }
+                }
+            }
+        },
+        {
+            "name": "AppInsights-Stage",
+            "type": "Khulnasoft.Resources/deployments",
+            "apiVersion": "2014-04-01-preview",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('sharedTemplateUrl'), '/', variables('appInsightsTemplateFile'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "WebsiteName": { "value": "[concat(parameters('WebsiteName'), '-Staging')]" }
+                }
+            }
+        },
+        {
+            "name": "HostingPlan",
+            "type": "Khulnasoft.Resources/deployments",
+            "apiVersion": "2014-04-01-preview",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('sharedTemplateUrl'), '/', variables('hostingPlanTemplateFile'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "StartHostingPlanName": { "value": "[parameters('StartHostingPlanName')]" },
+                    "StartHostingPlanSKU": { "value": "[parameters('StartHostingPlanSKU')]" },
+                    "StartHostingPlanWorkerSize": { "value": "[parameters('StartHostingPlanWorkerSize')]" },
+                    "EnableRules": { "value": "[parameters('EnableRules')]" }
+                }
+            }
+        },
+        {
+            "name": "Website",
+            "type": "Khulnasoft.Resources/deployments",
+            "apiVersion": "2014-04-01-preview",
+            "dependsOn": [
+                "Khulnasoft.Resources/deployments/HostingPlan",
+                "Khulnasoft.Resources/deployments/SqlServerAndDb",
+                "Khulnasoft.Resources/deployments/SqlServerAndDb-Dev",
+                "Khulnasoft.Resources/deployments/SqlServerAndDb-Stage",
+                "Khulnasoft.Resources/deployments/AppInsights",
+                "Khulnasoft.Resources/deployments/AppInsights-Dev",
+                "Khulnasoft.Resources/deployments/AppInsights-Stage"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('sharedTemplateUrl'), '/', variables('websiteTemplateFile'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "WebsiteName": { "value": "[parameters('WebsiteName')]" },
+                    "HostingPlanName": { "value": "[parameters('StartHostingPlanName')]" },
+                    "DatabaseConnectionString": { "value": "[reference('Khulnasoft.Resources/deployments/SqlServerAndDb').outputs.connectionString.value]" },
+                    "DevSlotDatabaseConnectionString": { "value": "[reference('Khulnasoft.Resources/deployments/SqlServerAndDb-Dev').outputs.connectionString.value]" },
+                    "StageSlotDatabaseConnectionString": { "value": "[reference('Khulnasoft.Resources/deployments/SqlServerAndDb-Stage').outputs.connectionString.value]" },
+                    "AppInsightsKey": { "value": "[reference('Khulnasoft.Resources/deployments/AppInsights').outputs.instrumentationKey.value]" },
+                    "DevSlotAppInsightsKey": { "value": "[reference('Khulnasoft.Resources/deployments/AppInsights-Dev').outputs.instrumentationKey.value]" },
+                    "StageSlotAppInsightsKey": { "value": "[reference('Khulnasoft.Resources/deployments/AppInsights-Stage').outputs.instrumentationKey.value]" }
+                }
+            }
+        },
+        {
+            "name": "WebsiteRules",
+            "type": "Khulnasoft.Resources/deployments",
+            "apiVersion": "2014-04-01-preview",
+            "dependsOn": [
+                "Khulnasoft.Resources/deployments/Website"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('sharedTemplateUrl'), '/', variables('websiteRulesTemplateFile'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "WebsiteName": { "value": "[parameters('WebsiteName')]" },
+                    "EnableRules": { "value": "[parameters('EnableRules')]" }
+                }
+            }
+        }
+    ]
+}

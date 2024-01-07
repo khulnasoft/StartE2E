@@ -1,0 +1,87 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "StartServerName": {
+            "type": "string"
+        },
+        "StartServerAdminLogin": {
+            "type": "string"
+        },
+        "StartServerAdminLoginPassword": {
+            "type": "securestring"
+        },
+        "StartDBName": {
+            "type": "string"
+        },
+        "StartDBCollation": {
+            "type": "string",
+            "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+        },
+        "StartDBEdition": {
+            "type": "string",
+            "defaultValue": "Web",
+            "allowedValues": [
+                "Basic",
+                "Business",
+                "Premium",
+                "Standard",
+                "Web"
+            ]
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('StartServerName')]",
+            "type": "Khulnasoft.Sql/servers",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2014-04-01-preview",
+            "dependsOn": [ ],
+            "tags": {
+                "displayName": "StartServer"
+            },
+            "properties": {
+                "administratorLogin": "[parameters('StartServerAdminLogin')]",
+                "administratorLoginPassword": "[parameters('StartServerAdminLoginPassword')]"
+            },
+            "resources": [
+                {
+                    "name": "[concat('AllowAllIps', parameters('StartServerName'))]",
+                    "type": "firewallrules",
+                    "location": "[resourceGroup().location]",
+                    "apiVersion": "2014-04-01-preview",
+                    "dependsOn": [
+                        "[concat('Khulnasoft.Sql/servers/', parameters('StartServerName'))]"
+                    ],
+                    "properties": {
+                        "startIpAddress": "0.0.0.0",
+                        "endIpAddress": "0.0.0.0"
+                    }
+                },
+                {
+                    "name": "[parameters('StartDBName')]",
+                    "type": "databases",
+                    "location": "[resourceGroup().location]",
+                    "apiVersion": "2014-04-01-preview",
+                    "dependsOn": [
+                        "[parameters('StartServerName')]"
+                    ],
+                    "tags": {
+                        "displayName": "StartDB"
+                    },
+                    "properties": {
+                        "collation": "[parameters('StartDBCollation')]",
+                        "edition": "[parameters('StartDBEdition')]",
+                        "maxSizeBytes": "1073741824"
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "connectionString": {
+            "type": "string",
+            "value": "[concat('Data Source=tcp:', reference(concat('Khulnasoft.Sql/servers/', parameters('StartServerName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('StartDBName'), ';User Id=', parameters('StartServerAdminLogin'), '@', parameters('StartServerName'), ';Password=', parameters('StartServerAdminLoginPassword'), ';')]"
+        }
+    }
+}
